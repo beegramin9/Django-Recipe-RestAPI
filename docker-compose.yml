@@ -20,5 +20,7 @@ services:
     # 앱을 실행하기 위한 command 설정
     # shell에서 command로 실행하겠다
     # 도커 이미지가 8000이기만 하면 모든 ip주소에서 run 가능
+
+    #  sudo docker-compose run app sh -c "django-admin.py startproject app ." 으로 쟝고 프로젝트 시작
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
