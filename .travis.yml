@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.7"
+
+services:
+  # Dockerfile, docker-compose의 configuration을 상속받는다.
+  -docker
+
+# Travis가 app이 execute 되기 전에 모든 automation command를 run함
+before_script: pip install docker-compose
+
+script:
+  - docker-compose run app sh -c "python manage.py test && flake8"

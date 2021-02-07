@@ -1,0 +1,7 @@
+[flake8]
+# Django에 의해 자동적으로 생성된 script들을 exclude한다.
+exclude =
+    migration,
+    __pychace__,
+    manage.py,
+    settings.py
