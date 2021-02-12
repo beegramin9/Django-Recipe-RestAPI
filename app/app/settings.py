@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # NestJS의 app.module.js처럼 모든 subapp의 중심이 되는 core app
+    # 내가 만든 core 앱을 추가하기
+    'core'
+    
 ]
 
 MIDDLEWARE = [
@@ -118,3 +122,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# core = 내가만든 앱(= app.module) 이름 
+# User = 내 앱 안 models.py의 새로운 model 이름 ( == 클래스 이름)
+""" 디펜던시 인젝션과 유사 """
+AUTH_USER_MODEL = "core.User"
