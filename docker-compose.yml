@@ -24,3 +24,33 @@ services:
     #  sudo docker-compose run app sh -c "django-admin.py startproject app ." 으로 쟝고 프로젝트 시작
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+
+    environment:
+      # 내 db와 이름이 같아야 한다. 즉 아래 db를 그대로 쓰면 된다
+      - DB_HOST=db
+      # POSTGRES_DB와 같음
+      - DB_NAME=app
+      # POSTGRES_USER
+      - DB_USER=postgres
+      # POSTGRES_PASSWORD
+      - DB_PASS=supersecretpassword
+      # app이 db에 depend하게됨
+      # app에서 db가 accessible
+      # db가 app 시작 전에 먼저 시작되고
+      # host 이름을 db로 하면 데이터베이스 서버가 온라인으로 available해짐
+
+    depends_on:
+      - db
+
+  db:
+    image: postgres:10-alpine
+    # DB이름, username, password
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      # production할때는 encrypt된 환경변수를 입력할 것.
+      - POSTGRES_PASSWORD=supersecretpassword
+
+
+# Docker와 communicate하게 해주는 파이썬 패키지를
+# Docker File 디펜던시에 넣어주면 된다.
