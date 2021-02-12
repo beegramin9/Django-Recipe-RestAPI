@@ -18,6 +18,8 @@ class UserManager(BaseUserManager):
 
         # self.model = UserManager(따로 override안 했으니 사실은 BaseUserManager)의 model 객체. 
         # 새로운 모델을 만들어서 user 변수에 할당
+
+        # the first part of an email is case sensitive, so normalizing an email will not change anything before the "@"
         user = self.model(email=self.normalize_email(email), **extra_fields)
         # password encryption
         user.set_password(password)
