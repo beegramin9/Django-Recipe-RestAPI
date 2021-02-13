@@ -77,10 +77,17 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# Docker에서 Postgres 설치했으니 여기도 수정해야함 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 사용할 데이터베이스 엔진
+        'ENGINE': 'django.db.backends.postgresql',
+        # HOST: host값, username, db name과 password 모두 환경변수에서 가져옴
+        # docker-compose 파일의 enviornment의 내용
+        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS')
     }
 }
 
