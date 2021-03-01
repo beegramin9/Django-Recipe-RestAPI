@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # NestJS의 app.module.js처럼 모든 subapp의 중심이 되는 core app
     # 내가 만든 core 앱을 추가하기
+
+    # auth 토큰을 사용하기 위해 추가
+    'rest_framework',
+    'rest_framework.authtoken',
+    'user',
     'core'
     
 ]
