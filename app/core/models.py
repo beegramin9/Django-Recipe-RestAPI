@@ -8,8 +8,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 == 디펜던시 인젝션과 같이)
 email로 customize를 해준 것 """
 
-# Manager 클래스는 helper functions(createUser, createSuperUser)들을 제공한다
 class UserManager(BaseUserManager):
+    """ Manager 클래스는 helper functions(createUser, createSuperUser)들을 제공
+    쟝고 ORM에서 사용될 수 있는 함수들을 customizing """
     def create_user(self, email, password=None, **extra_fields):
         # ES6와 같이, 다른 모든 것들을 extra_fields object(딕셔너리)에 넣는다.
         """ Creates and saves a new user  """
@@ -17,7 +18,7 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have an email address.')
 
         # self.model = UserManager(따로 override안 했으니 사실은 BaseUserManager)의 model 객체. 
-        # 새로운 모델을 만들어서 user 변수에 할당
+        # custom User Manager model overriding
 
         # the first part of an email is case sensitive, so normalizing an email will not change anything before the "@"
         user = self.model(email=self.normalize_email(email), **extra_fields)

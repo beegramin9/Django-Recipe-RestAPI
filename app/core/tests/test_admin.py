@@ -34,6 +34,7 @@ class AdminSiteTests(TestCase):
         ==> admin.py 에 change들을 입력해야 함"""
         # 리스트 유저 페이지를 위한 url을 만들어줌
         url = reverse('admin:core_user_changelist')
+        # HTTP get 요청
         res = self.client.get(url)
         
         # res 오브젝트 안에서 user.name이 있는지 알아서 확인함
@@ -43,7 +44,7 @@ class AdminSiteTests(TestCase):
     def test_user_change_page(self):
         """ Test that the user edit page works """
         url = reverse('admin:core_user_change', args=[self.user.id])
-        # /admin/core/user/1
+        # /admin/core/user/1, 왜? 만들어진 놈은 setUp에서 만들어진 한놈밖에 없음
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)

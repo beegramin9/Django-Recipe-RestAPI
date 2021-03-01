@@ -8,6 +8,7 @@ from core import models
 # 파이썬의 string을 human readable text로 바꾼다.
 from django.utils.translation import gettext as _
 
+# Useradmin은 뭐야 대체
 class UserAdmin(BaseUserAdmin):
     # id로 order
     ordering = ['id']
@@ -24,6 +25,8 @@ class UserAdmin(BaseUserAdmin):
         (_('Important dates'), {'fields': ('last_login',)})
     )
     # add Page에 추가할 fields
+    # 요기에 username이 아니라 email로 바꾸면 ID 기본설정이
+    # email로 바뀌는 것
     add_fieldsets = (
         # 맨 첫줄은 title
         (None, {

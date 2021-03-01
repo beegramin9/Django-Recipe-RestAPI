@@ -16,8 +16,7 @@ class ModelTests(TestCase):
 
 
         # print(get_user_model().objects)
-        """ get_user_model() == class 'core.models.user' 
-        get_user_model().objects == core.models.user """
+        """ get_user_model() == class 'core.models.user' """
 
         # 내 User모델의 create_user 메소드를 그대로 가져와서 쓰는 것
         user = get_user_model().objects.create_user(
@@ -51,3 +50,8 @@ class ModelTests(TestCase):
         # User에 is_superuser를 더하지 않았지만 PermissionsMixin에 기본으로 있음
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+""" 
+이거 달면 그냥 python my_tests.py 로만 써도 된다는데?
+if __name__ == '__main__':
+    main() """
