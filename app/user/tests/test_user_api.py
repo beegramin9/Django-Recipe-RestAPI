@@ -1,4 +1,4 @@
-""" 새 Test를 만들면
+""" Test에서 reverse로 새 url을 만들면
 Test를 시행하게 될 Url(=reverse('user:create')을 만들 View를,
 이 url에 DTO 역할을 할 Serializer를,
 그리고 url을 메인 앱의 urls.py 에 연결해야 한다 """
@@ -13,6 +13,8 @@ from rest_framework import status
 
 # Constant Variable
 CREATE_USER_URL = reverse('user:create')
+TOKEN_URL = reverse('user:token')
+
 
 # example로 쓸 user를 만들 Helper function/ sugar syntax
 def create_user(**params):
@@ -28,7 +30,7 @@ class PublicUserApiTests(TestCase):
         """ Test creating user with valid payload is successful """
         # payload: API에 request를 보낼 때 같이 보내는 object
         payload = {
-            'email':'Test@londonappdev.com ',
+            'email':'Test@londonappdev.com',
             'password':'testpass',
             'name':'Test name'
         }
@@ -47,7 +49,7 @@ class PublicUserApiTests(TestCase):
     def test_user_exists(self):
         """ Test creating user that already exists fails """
         payload = {
-            'email':'Test@londonappdev.com ',
+            'email':'Test@londonappdev.com',
             'password':'testpass',
             'name':'Test name'
         }            
@@ -60,7 +62,7 @@ class PublicUserApiTests(TestCase):
     def test_password_too_short(self):
         """ Test that the password must be more than 5 characters """
         payload = {
-            'email':'Test@londonappdev.com ',
+            'email':'Test@londonappdev.com',
             'password':'pwd',
             'name':'Test name'
         }   
@@ -74,8 +76,52 @@ class PublicUserApiTests(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
+    # 새 auth를 만드는 것이기때문에 public 아래로
+    def test_create_token_for_user(self):
+        """ Test that a token is created for the user """
+        payload = {
+            'email':'Test@londonappdev.com',
+            'password':'testpass',
+            'name':'Test name'
+        }   
+        create_user(**payload)
+        res = self.client.post(TOKEN_URL, payload)
+        # 성공적으로 create 되었다면 token이 있을 것, 빌트인 쟝고 auth
+        self.assertIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    pass
+    def test_create_token_invalid_credentials(self):
+        """ Test that token is not created if invalid credentials are given """
+        create_user(email='Test@londonappdev.com', password='testpass')
+        # 잘못된 Password
+        payload = {
+            'email':'Test@londonappdev.com',
+            'password':'wrong',
+            'name':'Test name'
+        }
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_token_no_user(self):
+        """ Test that token is not created if user doesn't exist """
+        payload = {
+            'email':'Test@londonappdev.com',
+            'password':'testpass',
+            'name':'Test name'
+        }
+        # 여기선 create_user()로 새 user를 만들지 않음
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_token_missing_field(self):
+        """ Test taht email and password are required """
+        res = self.client.post(TOKEN_URL, {'email':'one', 'password':''})
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+
 # Authenticated = Private 
 class PrivateUserApiTest(TestCase):
     pass
