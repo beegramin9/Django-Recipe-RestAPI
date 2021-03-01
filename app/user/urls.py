@@ -5,7 +5,8 @@ from user import views
 # test 파일에서 reverse로 만든 app 이름과 같다
 app_name = 'user'
 urlpatterns = [
-    # name에 주면 test 파일의 reverse에서 어떤 url인지 매치가 된다
+    # name에 주는 것은 test 파일의 reverse의 url과 매치되야 한다
     # user:create
     path('create/', views.CreateUserView.as_view(), name = 'create'),
+    path('token/', views.CreateTokenView.as_view(), name = 'token'),
 ]
