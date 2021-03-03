@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+# settings.py에서 setting을 가져오는 recommmended way
+from django.conf import settings
 # Create your models here.
 """ 쟝고의 default User 모델은 
 아이디를 username으로 예상한다. 
@@ -55,3 +57,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
     # username_field의 default값을 username을 email로 바꿈
     USERNAME_FIELD = 'email'
+
+""" 새 모델 만들때마다 admin.py에 model register 필요 """
+class Tag(models.Model):
+    """ Tag to be used for a recipe """
+    name = models.CharField(max_length=255)
+    # user foriegn key를 assign할건데
+    # 바로 reference하지 않고 from django.conf import settings에서
+    # settings.py의 auth user model을 refernce할 것
+
+    user = models.ForeignKey(
+        # foriegn key로 묶을 모델
+        settings.AUTH_USER_MODEL,
+        # foriegn key로 묶인 user를 지우면 어케할거?
+        # CASCADE: Tag랑 같이 지워진다
+        on_delete = models.CASCADE
+    )
+
+    # Optional
+    def __str__(self):
+        return self.name

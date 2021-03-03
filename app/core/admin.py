@@ -40,4 +40,6 @@ class UserAdmin(BaseUserAdmin):
 # UserAdmin을 User 모델에 등록하면 쟝고 admin에 등록이 완료됨
 """ 쟝고 admin이 User 모델의 change를 follow할 수 있게함 """
 admin.site.register(models.User, UserAdmin)
+# User 모델이 아니라 평범한 CRUD 기능 가진 모델이라 따로 파라미터 없음
+admin.site.register(models.Tag)
 
