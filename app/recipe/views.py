@@ -10,7 +10,9 @@ from core.models import Tag
 from recipe import serializers
 
 
-class TagViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class TagViewSet(viewsets.GenericViewSet,
+                mixins.ListModelMixin,
+                mixins.CreateModelMixin):
     """ Manage tags in the database """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -28,3 +30,11 @@ class TagViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         # request에 들어있는 user의 태그만
         # 즉 test에서 force_authenticate 된 setUp의 user만 통과
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    # Tag를 correct user에게 assign하기 위해
+    # create process에 hookin을 가능하게 함
+    # object를 create할 때 실행되고 validated된 serializer가 pass됨
+    def perform_create(self, serializer):
+        """ Create a new tag """
+        # 여기 왜 serializer 쓰는거지?
+        serializer.save(user = self.request.user)

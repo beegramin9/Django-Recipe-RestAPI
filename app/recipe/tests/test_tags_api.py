@@ -70,4 +70,22 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(len(res.data), 1)
         # response의 tag가 우리가 assign한게 맞는지
         self.assertEqual(res.data[0]['name'], tag.name)
- 
+
+    def test_create_tag_successful(self):
+        """ Test creating a new tag """
+        payload = {'name': 'Test tag'}
+        self.client.post(TAGS_URL, payload)
+        exists = Tag.objects.filter(
+            user = self.user,
+            name = payload['name']
+        ).exists()
+        self.assertTrue(exists)
+
+    def test_create_tag_invalid(self):
+        """ Test creating a new tag with invalid payload """
+        payload = {'name': ''}
+        
+        res = self.client.post(TAGS_URL, payload)
+        # 맨 처음 할때는 400 대신 405가 들어오는데
+        # views.py에서 ViewSet의 ListModelMixin에 CreateModelMixin을 추가해야 한다.
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
