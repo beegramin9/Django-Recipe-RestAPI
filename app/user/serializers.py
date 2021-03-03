@@ -1,3 +1,4 @@
+# Meta 클래스에서 model을 맞춰줘야 하기 때문에 대상 model import함
 from django.contrib.auth import get_user_model, authenticate
 # Output 되는 message를 언어에 맞춰 자동 번역
 from django.utils.translation import ugettext_lazy as _
