@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     # auth 토큰을 사용하기 위해 추가
     'rest_framework',
     'rest_framework.authtoken',
+    'core',
     'user',
-    'core'
-    
+    'recipe',
 ]
 
 MIDDLEWARE = [
