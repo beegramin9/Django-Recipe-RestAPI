@@ -21,6 +21,25 @@ class UserSerializer(serializers.ModelSerializer):
         # 즉, Data validation이 이미 된 create/update funciton
         return get_user_model().objects.create_user(**validated_data)
 
+    # ManageUserView를 위한 update 기능 추가
+    # password를 set_password로 set하고 싶어서임
+    # 요기 instance는 Meta의 model에서 update될 instance
+    def update(self, instance, validated_data):
+        """ Update a user, setting the password correctly and return it """
+        # password 제거
+        # pop 함수는 'password'가 없을 떄를 대비해 default로 None을 준다
+        # user 만들때 password를 optional하게 해서 그럼
+        password = validated_data.pop('password', None)
+        # ModelSerializer의 default update 메소드를 가져와서
+        # 기본 기능은 다 쓸수 있게 하고 extend도 가능하게
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+            
+        return user
+
+
 # Model로 들어가는 데이터를 관리하는게 아니라 기본 Serializer        
 class AuthTokenSerializer(serializers.Serializer):
     """ Serializer for the user authentication object """
