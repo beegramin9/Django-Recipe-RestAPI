@@ -14,7 +14,7 @@ from rest_framework import status
 # Constant Variable
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
-
+ME_URL = reverse('user:me')
 
 # example로 쓸 user를 만들 Helper function/ sugar syntax
 def create_user(**params):
@@ -116,12 +116,59 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_token_missing_field(self):
-        """ Test taht email and password are required """
+        """ Test that email and password are required """
         res = self.client.post(TOKEN_URL, {'email':'one', 'password':''})
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
+    # unauth된 user가 사용하는 것을 가정
+    def test_retrieve_user_unauthorized(self):
+        """ Test that authentication is required for users  """
+        res = self.client.get(ME_URL)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 # Authenticated = Private 
+# Auth된 user가 사용하는 것을 가정
+# edit만 지원할 것이기에 post는 지원안할것, patch와 put만 할 것
 class PrivateUserApiTest(TestCase):
-    pass
+    """ Test API requests that require authentication """
+    def setUp(self):
+        self.user  = create_user(
+            email = 'test@londonappdev.com',
+            password = 'testpass',
+            name = 'name'
+        )
+        self.client = APIClient()
+        # 모든 request를 위에 만든 sample user로 authenticate
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_profile_success(self):
+        """ Test retrieving profile for logged in user """
+        res = self.client.get(ME_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # res의 user와 auth된 user가 같은지 확인
+        # res엔 password를 보내지 않는다
+        self.assertEqual(res.data, {
+            'name': self.user.name,
+            'email': self.user.email
+        })
+    
+    def test_post_me_not_allowed(self):
+        """ Test that POST request is not allowed on ME_URL """
+        # Post 에 아무것도 보내지 않는다
+        res = self.client.post(ME_URL, {})
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_profile(self):
+        """ Test updating the user profile for authenticated user """
+        payload = {
+            'name': 'new name',
+            'password': 'newpassword123'
+        }
+        res = self.client.patch(ME_URL, payload)
+        # 쟝고 ORM, user 정보를 업뎃했으니 업뎃된 정보를 db에서 가져옴
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
