@@ -8,6 +8,13 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 """ create_user(helper function)이 새로운 user를 잘 만드는지를 test """
 
+from core import models
+
+# sugar syntax, test할때 쓸 sample user
+def sample_user(email='test@londonappdev.com', password = 'testpass'):
+    """ Create a sample user """
+    return get_user_model().objects.create_user(email, password)
+
 class ModelTests(TestCase):
     def test_create_user_with_email_successful(self):
         """ Test creating a new user with an email succeeded. """
@@ -51,7 +58,14 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
-""" 
-이거 달면 그냥 python my_tests.py 로만 써도 된다는데?
-if __name__ == '__main__':
-    main() """
+    # Tag 테스트
+    def test_tag_str(self):
+        """ Test the tag converts to the correct string representation """
+        tag = models.Tag.objects.create(
+            user = sample_user(),
+            # Tag name, string으로 바꿀 field
+            name = "Vegan"
+        )
+        self.assertEqual(str(tag), tag.name)
+
+    
