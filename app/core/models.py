@@ -58,7 +58,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     # username_field의 default값을 username을 email로 바꿈
     USERNAME_FIELD = 'email'
 
-""" 새 모델 만들때마다 admin.py에 model register 필요 """
+""" 새 모델 만들때마다 migration 커맨드 돌리고
+admin.py에 model register 필요 """
 class Tag(models.Model):
     """ Tag to be used for a recipe """
     name = models.CharField(max_length=255)
@@ -75,5 +76,17 @@ class Tag(models.Model):
     )
 
     # Optional
+    def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    """ Ingredient to be used in a recipe """
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE
+    )
+
     def __str__(self):
         return self.name

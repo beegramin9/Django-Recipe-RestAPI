@@ -12,6 +12,7 @@ router = DefaultRouter()
 # 연결할 url 이름, base_name은 url 가져올때 사용됨
 # register하면 recipe url에 적용이 되는 것
 router.register('tags', views.TagViewSet)
+router.register('ingredients', views.IngredientViewSet)
 
 app_name = 'recipe'
 
