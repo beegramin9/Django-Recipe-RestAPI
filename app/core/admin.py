@@ -43,3 +43,4 @@ admin.site.register(models.User, UserAdmin)
 # User 모델이 아니라 평범한 CRUD 기능 가진 모델이라 따로 파라미터 없음ㄴ
 admin.site.register(models.Tag)
 admin.site.register(models.Ingredient)
+admin.site.register(models.Recipe)

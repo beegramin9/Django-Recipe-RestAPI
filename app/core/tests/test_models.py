@@ -58,7 +58,7 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
-    # Tag 테스트
+    # Tag를 string으로 성공적으로 retrieve 할 수 있는지
     def test_tag_str(self):
         """ Test the tag converts to the correct string representation """
         tag = models.Tag.objects.create(
@@ -68,7 +68,7 @@ class ModelTests(TestCase):
         )
         self.assertEqual(str(tag), tag.name)
 
-    # Ingredient 테스트
+    # Ingredient를 string으로 성공적으로 retrieve 할 수 있는지
     def test_ingredient_str(self):
         """ Test the ingredient converts to the correct string representation """
         ingredient = models.Ingredient.objects.create(
@@ -76,3 +76,14 @@ class ModelTests(TestCase):
             name = 'cucumber'
         )
         self.assertEqual(str(ingredient), ingredient.name)
+
+    # Recpie를 string으로 성공적으로 retrieve 할 수 있는지
+    def test_recipe_str(self):
+        """ Test the recipe converts to the correct string """
+        recipe = models.Recipe.objects.create(
+            user = sample_user(),
+            title = "Steak and mushroom sauce",
+            time_minutes = 5,
+            price = 5.00
+        )
+        self.assertEqual(str(recipe), recipe.title)
