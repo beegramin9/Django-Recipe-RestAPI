@@ -63,3 +63,25 @@ class PrivateIngredientApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], ingredient.name)
+
+    # Create 기능 추가(Viewset에 CreateModelMixin 추가 필요)
+    # Viewset에 Create 기능을 추가하지 않으면 
+    # exists는 False가 나오고
+    def test_create_ingredient_successful(self):
+        """ Test create a new ingredient """
+        payload = {'name': 'Cabbage'}
+        self.client.post(INGREDIENT_URL, payload)
+
+        exists = Ingredient.objects.filter(
+            user=self.user,
+            name=payload['name']
+        ).exists()
+        self.assertTrue(exists)
+
+    # 여기는 method not allowed인 405가 나온다
+    def test_create_ingredient_invalid(self):
+        """ Test creating invalid ingredient fails """
+        payload = {'name':''}
+        res = self.client.post(INGREDIENT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
