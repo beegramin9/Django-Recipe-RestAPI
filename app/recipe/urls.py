@@ -13,6 +13,7 @@ router = DefaultRouter()
 # register하면 recipe url에 적용이 되는 것
 router.register('tags', views.TagViewSet)
 router.register('ingredients', views.IngredientViewSet)
+router.register('recipes', views.RecipeViewSet)
 
 app_name = 'recipe'
 

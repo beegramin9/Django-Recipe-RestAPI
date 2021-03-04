@@ -105,7 +105,7 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank = True)
 
     # many to many
-    ingredient = models.ManyToManyField('Ingredient')
+    ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
 
     def __str__(self):
