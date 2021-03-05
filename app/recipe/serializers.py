@@ -27,9 +27,12 @@ class IngredientSerializer(serializers.ModelSerializer):
     
 class RecipeSerializer(serializers.ModelSerializer):
     """ Serializer for recipe objects """
-
     # ingredients, tags는 Recipe 모델의 field가 아니니
     # Reference해줘야 한다
+
+    # PrimaryKeyRelatedField
+    # 모든 field만 가져오는 게 아니고 PrimaryKey, 즉 여기선
+    # Id만을 가져온다
     ingredients = serializers.PrimaryKeyRelatedField(
         # Many to Many
         many = True, 
@@ -48,3 +51,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'id' : {'read_only': True}
         }
+
+
+class RecipeDetailSerializer(RecipeSerializer):
+    """ Serialize a recipe detail """
+    ingredients = IngredientSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    

@@ -55,6 +55,7 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     """ Manage recipes in the database """
     serializer_class = serializers.RecipeSerializer
+    # action 중 하나, list
     queryset = Recipe.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -62,3 +63,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """ Retrieve the recipes exclusively for the auth user """
         return self.queryset.filter(user=self.request.user)
+
+    # certain request를 retrieve할 때 call 하는 함수
+    # viewset의 different action에 따라 serializer를 바꾸고 싶다면
+    # override
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == "retrieve":
+            return serializers.RecipeDetailSerializer
+        
+        return self.serializer_class
