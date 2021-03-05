@@ -172,3 +172,47 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(ingredients.count(), 2)
         self.assertIn(ingredient1, ingredients)
         self.assertIn(ingredient2, ingredients)
+
+    # Updating recipes
+    """ Update는 ModelViewset에 빌트인되어있어서
+    perform_create 안 넣어줘도 그냥 pass된다 """
+    def test_partial_update_recipe(self):
+        """ Test updating a recipe with PATCH """
+        recipe = sample_recipe(self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        new_tag = sample_tag(self.user, "Curry")
+        payload = {
+            'title': 'Chicken tikka',
+            'tags': [new_tag.id]
+        }
+        url = detail_url(recipe.id)
+        self.client.patch(url, payload)
+        # DB에서 update된 놈이랑 payload랑 맞는지
+        # 그래서 res랑 비교 안하니까 res를 안 만듦 
+        
+        # model에 reference가 있을 떈 create할때마다
+        # refresh를 해줘야지 바뀐다
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.title, payload['title'])
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 1)
+        self.assertIn(new_tag, tags)
+
+    def test_full_update_recipe(self):
+        """ Test updating a recipe with PUT """
+        recipe = sample_recipe(self.user)
+        recipe.tags.add(sample_tag(self.user))
+        payload = {
+            'title':'Spaghetti carbonara',
+            'time_minutes':25,
+            'price':5.00
+        }
+        url = detail_url(recipe.id)
+        self.client.put(url, payload)
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.title, payload['title'])
+        self.assertEqual(recipe.time_minutes, payload['time_minutes'])
+        self.assertEqual(recipe.price, payload['price'])
+        # payload에 tags가 없음
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 0)
