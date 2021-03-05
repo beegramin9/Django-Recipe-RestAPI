@@ -30,6 +30,7 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
         return self.queryset.filter(user=self.request.user).order_by('-name')
 
     """ Create queryset을 지원하려면 이게 있어야 함
+    (Create든 POST든 사용하면 이게 필요하다고 생각하면 됨)
     이 함수는 object를 create할떄 실행되고 validated된 serializer가 pass됨 """
     def perform_create(self, serializer):
         """ Create a new object """
@@ -73,3 +74,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return serializers.RecipeDetailSerializer
         
         return self.serializer_class
+
+    """ user에 auth된 user만 집어넣어줘도 test pass함
+    ModelViewSet이 out of the box하게 object를 create하기 떄문 """
+    def perform_create(self, serializer):
+        """ Create a new recipe """
+        serializer.save(user=self.request.user)

@@ -114,3 +114,61 @@ class PrivateRecipeApiTests(TestCase):
         # List를 하고싶었던 list view와는 달리 object 하나만 가져옴
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
+
+    # Creating recipes
+    # django.db.utils.IntegrityError: null value in column "user_id" violates not-null constraint
+    # create된 recipe object에 user가 연결이 안 되어있어서 그렇다
+    # viewset에 perform_create override해야 함
+    # perform_create는 auth된 user를 recipe의 user에 assign함
+    def test_create_basic_recipe(self):
+        """ Test creating recipe """
+        payload = {
+            'title':'Chocolate cheesecake',
+            'time_minutes': 30,
+            'price': 5.00
+        }
+        res = self.client.post(RECIPE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipe = Recipe.objects.get(id = res.data['id'])
+        for key in payload.keys():
+            # getattr: python helper function
+            self.assertEqual(payload[key], getattr(recipe, key))
+    
+    def test_create_recipe_with_tags(self):
+        """ Test creating a recipe with tags """
+        tag1 = sample_tag(self.user, 'Vegan')
+        tag2 = sample_tag(self.user, 'Dessert')
+        payload = {
+            'title':'Avocado lime cheesecake',
+            # 왜 Id로 가져오지?
+            'tags': [tag1.id, tag2.id],
+            'time_minutes':60,
+            'price':20.00
+        }
+        res = self.client.post(RECIPE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipe = Recipe.objects.get(id = res.data['id'])
+        # recipe에 딸려 만들어진 tags retrieve
+        # recipe object 안에 tags라는 key가 있네
+        tags = recipe.tags.all()
+        self.assertEqual(tags.count(), 2)
+        self.assertIn(tag1, tags)
+        self.assertIn(tag2, tags)
+
+    def test_create_recipe_with_ingredients(self):
+        """ Test creating recipe with ingredients """
+        ingredient1 = sample_ingredient(self.user, 'Prawns')
+        ingredient2 = sample_ingredient(self.user, 'Ginger')
+        payload = {
+            'title' : 'Thai prawn red curry',
+            'ingredients': [ingredient1.id, ingredient2.id],
+            'time_minutes': 20,
+            'price': 7.00
+        }
+        res = self.client.post(RECIPE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipe = Recipe.objects.get(id = res.data['id'])
+        ingredients = recipe.ingredients.all()
+        self.assertEqual(ingredients.count(), 2)
+        self.assertIn(ingredient1, ingredients)
+        self.assertIn(ingredient2, ingredients)
