@@ -1,0 +1,19 @@
+# starting the app
+sudo docker-compose up
+
+# creating a superuser
+sudo docker-compose run --rm app sh -c "python manage.py startapp user"
+
+# docker-compose로 실행하기 때문에
+# 영상에 나오는 모든 명령어 앞에
+sudo docker-compose run app sh -c "명령어"
+# 로 사용하면 된다.
+
+python manage.py runserver만큼은
+내가 docker-compose로 사용했고 거기서 app을 run할 때 쓰일 command를
+명시해놨기 때문에
+sudo docker-compose up 만 쓰면 알아서 migrate, runserver 실행한다.
+
+서버는 항상 켜두는 거고, 따로 command를 할 일이 있으면
+cmd 창 하나 더 열어서 디렉토리에서 sudo docker-compose run app sh -c ""
+만약 FileNotFoundError(2, 'No such file or directory') 가 나오면 sudo dockerd가 안 켜져있을 것

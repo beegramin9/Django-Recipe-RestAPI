@@ -1,0 +1,15 @@
+sudo docker-compose up 으로 앱을 돌리고
+localhost:8000/admin 으로 들어가면
+Django administration 페이지가 뜬다. 
+
+DB migration만 하면 해당 모델에서 CRUD를 할 수 있다.
+그럼 처음에 admin 계정을 만들어야겠지?
+이 명령어가 python manage.py createsuperuser
+여기선 아이디/비번 askdjango/13학번원태
+
+해당 앱에서 DB migration으로 만든 모델을 관리하고 싶다면
+해당 앱(여기선 blog 앱)의 admin.py에서 
+
+from .models(현재 디렉토리 model.py 파일) import Post(만든 모델이름)
+
+admin.site.register(Post) 써주면 됨
