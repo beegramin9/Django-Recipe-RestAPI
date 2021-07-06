@@ -1,5 +1,5 @@
 # docker-compose 파일은 해당 프로젝트를 위한 모든 configuration을 가지고 있다.
-
+# sudo docker-compose build
 # docker-compose version
 version: "3"
 
